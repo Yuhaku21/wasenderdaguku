@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daguku WhatsApp Sender</title>
+  <title>Daguku Manajemen Sistem</title>
 
   <style>
     * {
@@ -58,13 +58,54 @@
     .logout {
       background: #ef4444
     }
+
+    .preview-box {
+      margin-top: 12px;
+      background: #020617;
+      border-radius: 14px;
+      padding: 12px;
+      animation: fadeUp .3s ease;
+    }
+
+
+    .preview-title {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
+
+
+    .chat-bubble {
+      background: #22c55e;
+      color: #000;
+      padding: 10px 14px;
+      border-radius: 16px 16px 4px 16px;
+      font-size: 14px;
+      max-width: 85%;
+      margin-left: auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
+      white-space: pre-line;
+    }
+
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   </style>
 </head>
 
 <body>
 
   <div class="card" id="loginBox">
-    <h2>🔐 Login Worker</h2>
+    <h2>Daguku Manajemen Sistem</h2>
     <input id="username" placeholder="Username">
     <input id="password" type="password" placeholder="Password">
     <button onclick="login()">Login</button>
@@ -80,10 +121,27 @@
       <option value="Order sudah selesai kak 😊">Order Selesai</option>
     </select>
     <button onclick="sendWA()">Kirim WhatsApp</button>
-    <button class="logout" onclick="logout()">Logout</button>
+    <div id="preview" class="preview-box hidden">
+      <div class="preview-title">Preview Pesan</div>
+      <div class="chat-bubble" id="previewText"></div>
+    </div>
   </div>
 
   <script>
+    const messageSelect = document.getElementById("message");
+    const previewBox = document.getElementById("preview");
+    const previewText = document.getElementById("previewText");
+
+    messageSelect.addEventListener("change", () => {
+      const msg = messageSelect.value;
+      if (msg) {
+        previewText.textContent = msg;
+        previewBox.classList.remove("hidden");
+      } else {
+        previewBox.classList.add("hidden");
+      }
+    });
+
     if (localStorage.getItem("token")) {
       showDashboard();
     }
