@@ -4,169 +4,105 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daguku WhatsApp Sender</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box;font-family:Inter,sans-serif}
-
+*{box-sizing:border-box;font-family:Inter}
 body{
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:radial-gradient(circle at top,#1f2933,#000);
-  color:#e5e7eb;
-  padding:16px;
+  margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at top,#1f2933,#000);color:#e5e7eb;padding:16px
 }
-
 .card{
-  width:100%;
-  max-width:420px;
-  background:rgba(17,24,39,.9);
-  border-radius:18px;
-  padding:26px;
-  box-shadow:0 0 40px rgba(37,211,102,.2);
-  border:1px solid rgba(255,255,255,.05);
+  width:100%;max-width:420px;background:rgba(17,24,39,.9);
+  padding:26px;border-radius:18px;box-shadow:0 0 40px rgba(37,211,102,.2)
 }
-
-h2{text-align:center;margin-bottom:8px}
-p{text-align:center;color:#9ca3af;margin-bottom:20px}
-
-label{font-size:13px;font-weight:600;margin-bottom:6px;display:block}
-
-input,select{
-  width:100%;
-  padding:13px;
-  border-radius:12px;
-  border:1px solid #374151;
-  background:#020617;
-  color:#e5e7eb;
-  margin-bottom:16px;
-}
-
-button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:14px;
-  font-size:16px;
-  font-weight:600;
-  background:linear-gradient(135deg,#25D366,#1db954);
-  cursor:pointer;
-}
-
-.logout{background:#ef4444;color:#fff;margin-top:10px}
-
 .hidden{display:none}
-
-.preview{
-  margin-top:18px;
-  background:#020617;
-  padding:14px;
-  border-radius:12px;
+input,select,button{
+  width:100%;padding:13px;border-radius:12px;margin-bottom:14px;border:none
 }
-
-.bubble{
-  background:#25D366;
-  color:#000;
-  padding:12px;
-  border-radius:14px 14px 4px 14px;
-}
+input,select{background:#020617;color:#fff}
+button{background:#25D366;font-weight:600;cursor:pointer}
+.logout{background:#ef4444}
+.preview{background:#020617;padding:12px;border-radius:12px}
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
-<div class="card" id="loginBox">
-  <h2>🔐 Login Worker</h2>
-  <p>Masuk ke sistem Daguku</p>
-
-  <label>Username</label>
-  <input id="username" type="text" placeholder="workerdaguku">
-
-  <label>Password</label>
-  <input id="password" type="password" placeholder="••••••••">
-
+<div class="card" id="login">
+  <h3>🔐 Login Worker</h3>
+  <input id="username" placeholder="Username">
+  <input id="password" type="password" placeholder="Password">
   <button onclick="login()">Login</button>
 </div>
 
-<!-- DASHBOARD -->
 <div class="card hidden" id="dashboard">
-  <h2>💬 Daguku WhatsApp Sender</h2>
-  <p>Kirim pesan cepat dengan template</p>
+  <h3>💬 Daguku WhatsApp Sender</h3>
 
-  <label>Nomor WhatsApp</label>
   <input id="phone" placeholder="628xxxx">
 
-  <label>Template Pesan</label>
-  <select id="message" onchange="previewMessage()">
+  <select id="message" onchange="preview()">
     <option value="">-- Pilih pesan --</option>
-    <option value="Halo kak! Mohon kode verifikasi ya 😊">Minta Kode</option>
+    <option value="Halo kak, mohon kode verifikasi ya 😊">Minta Kode</option>
     <option value="Data akun masih salah kak 🙏">Data Salah</option>
     <option value="Order sudah selesai kak 😊">Order Selesai</option>
-    <option value="Order lagi di daguku.my.id ya 🔥">Promosi</option>
   </select>
 
-  <button onclick="sendWA()">🚀 Kirim WhatsApp</button>
+  <button onclick="sendWA()">Kirim WhatsApp</button>
   <button class="logout" onclick="logout()">Logout</button>
 
-  <div class="preview" id="previewBox" style="display:none">
-    <div class="bubble" id="previewText"></div>
+  <div class="preview hidden" id="previewBox">
+    <p id="previewText"></p>
   </div>
 </div>
 
 <script>
-/* === CREDENTIAL === */
-const USERNAME = "workerdaguku";
-const PASSWORD = "worker123";
-
 /* === AUTO LOGIN === */
-if(localStorage.getItem("login") === "true"){
+if(localStorage.getItem("token")){
   showDashboard();
 }
 
 /* === LOGIN === */
-function login(){
-  const user = document.getElementById("username").value.trim();
-  const pass = document.getElementById("password").value.trim();
+async function login(){
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
 
-  if(user === USERNAME && pass === PASSWORD){
-    localStorage.setItem("login","true");
+  const res = await fetch("/api/login",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ username, password })
+  });
+
+  const data = await res.json();
+
+  if(data.token){
+    localStorage.setItem("token", data.token);
     showDashboard();
   }else{
-    alert("Username atau password salah!");
+    alert("Login gagal");
   }
 }
 
-/* === LOGOUT === */
-function logout(){
-  localStorage.removeItem("login");
-  location.reload();
-}
-
-/* === UI === */
 function showDashboard(){
-  document.getElementById("loginBox").classList.add("hidden");
+  document.getElementById("login").classList.add("hidden");
   document.getElementById("dashboard").classList.remove("hidden");
 }
 
-/* === PREVIEW === */
-function previewMessage(){
-  const msg = document.getElementById("message").value;
-  if(!msg) return;
-  document.getElementById("previewBox").style.display="block";
-  document.getElementById("previewText").innerText = msg;
+function logout(){
+  localStorage.removeItem("token");
+  location.reload();
 }
 
-/* === SEND WA === */
+function preview(){
+  const msg = message.value;
+  if(!msg) return;
+  previewBox.classList.remove("hidden");
+  previewText.innerText = msg;
+}
+
 function sendWA(){
-  const phone = document.getElementById("phone").value;
-  const msg = document.getElementById("message").value;
-  if(!phone || !msg) return alert("Lengkapi data!");
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
+  if(!phone.value || !message.value) return alert("Lengkapi data");
+  window.open(`https://wa.me/${phone.value}?text=${encodeURIComponent(message.value)}`);
 }
 </script>
 
