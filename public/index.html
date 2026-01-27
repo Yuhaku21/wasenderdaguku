@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Daguku WhatsApp Sender</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
 
     body {
       margin: 0;
@@ -24,16 +28,25 @@
     .card {
       width: 100%;
       max-width: 420px;
-      background: rgba(17,24,39,.9);
+      background: rgba(17, 24, 39, .9);
       backdrop-filter: blur(14px);
       border-radius: 20px;
       padding: 26px;
-      box-shadow: 0 0 40px rgba(37,211,102,.15);
-      border: 1px solid rgba(255,255,255,.06);
+      box-shadow: 0 0 40px rgba(37, 211, 102, .15);
+      border: 1px solid rgba(255, 255, 255, .06);
     }
 
-    h2 { text-align: center; margin-bottom: 8px; }
-    p { text-align: center; font-size: 14px; color: #9ca3af; margin-bottom: 20px; }
+    h2 {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    p {
+      text-align: center;
+      font-size: 14px;
+      color: #9ca3af;
+      margin-bottom: 20px;
+    }
 
     label {
       font-size: 13px;
@@ -42,7 +55,8 @@
       display: block;
     }
 
-    input, select {
+    input,
+    select {
       width: 100%;
       padding: 13px;
       border-radius: 12px;
@@ -63,7 +77,7 @@
       background: linear-gradient(135deg, #25D366, #1db954);
       color: #000;
       cursor: pointer;
-      box-shadow: 0 10px 25px rgba(37,211,102,.35);
+      box-shadow: 0 10px 25px rgba(37, 211, 102, .35);
     }
 
     .logout {
@@ -89,131 +103,142 @@
       display: none;
     }
 
-    .hidden { display: none; }
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
+
 <body>
 
-<!-- LOGIN -->
-<div class="card hidden" id="loginPage">
-  <h2>🔐 Login Worker</h2>
-  <p>Masuk ke sistem Daguku</p>
+  <!-- LOGIN -->
+  <div class="card hidden" id="loginPage">
+    <h2>🔐 Login Worker</h2>
+    <p>Masuk ke sistem Daguku</p>
 
-  <label>Username</label>
-  <input type="text" id="username" placeholder="username">
+    <label>Username</label>
+    <input type="text" id="username" placeholder="username">
 
-  <label>Password</label>
-  <input type="password" id="password" placeholder="password">
+    <label>Password</label>
+    <input type="password" id="password" placeholder="password">
 
-  <button onclick="login()">Login</button>
-</div>
-
-<!-- DASHBOARD -->
-<div class="card hidden" id="dashboard">
-  <h2>💬 Daguku WA Sender</h2>
-  <p>Kirim pesan WhatsApp dengan cepat</p>
-
-  <label>Nomor WhatsApp</label>
-  <input type="tel" id="phone" placeholder="628xxxx">
-
-  <label>Template Pesan</label>
-  <select id="message" onchange="previewMessage()">
-    <option value="">-- Pilih pesan --</option>
-    <option value="Halo kak! Saya penjoki Daguku, mohon kode verifikasi ya kak 😊">Minta Kode</option>
-    <option value="Halo kak! Data akun masih salah, mohon dicek ulang 😊">Data Salah</option>
-    <option value="Order jokian kakak sudah selesai ya 🙏">Order Selesai</option>
-    <option value="Mimin mau promosi nih kak 😄 order lagi di daguku.my.id">Promosi</option>
-  </select>
-
-  <button onclick="sendMessage()">🚀 Kirim Pesan</button>
-  <button class="logout" onclick="logout()">🚪 Logout</button>
-
-  <div class="preview">
-    <div class="bubble" id="chatPreview"></div>
+    <button onclick="login()">Login</button>
   </div>
-</div>
 
-<script>
-  const tokenKey = "daguku_token";
+  <!-- DASHBOARD -->
+  <div class="card hidden" id="dashboard">
+    <h2>💬 Daguku WA Sender</h2>
+    <p>Kirim pesan WhatsApp dengan cepat</p>
 
-  /* ===== AUTH CHECK (MIDDLEWARE) ===== */
-  async function middleware() {
-    const token = localStorage.getItem(tokenKey);
-    if (!token) return showLogin();
+    <label>Nomor WhatsApp</label>
+    <input type="tel" id="phone" placeholder="628xxxx">
 
-    try {
-      const res = await fetch("/api/check", {
+    <label>Template Pesan</label>
+    <select id="message" onchange="previewMessage()">
+      <option value="">-- Pilih pesan --</option>
+      <option value="Halo kak! Saya penjoki Daguku, mohon kode verifikasi ya kak 😊">Minta Kode</option>
+      <option value="Halo kak! Data akun masih salah, mohon dicek ulang 😊">Data Salah</option>
+      <option value="Order jokian kakak sudah selesai ya 🙏">Order Selesai</option>
+      <option value="Mimin mau promosi nih kak 😄 order lagi di daguku.my.id">Promosi</option>
+    </select>
+
+    <button onclick="sendMessage()">🚀 Kirim Pesan</button>
+    <button class="logout" onclick="logout()">🚪 Logout</button>
+
+    <div class="preview">
+      <div class="bubble" id="chatPreview"></div>
+    </div>
+  </div>
+
+  <script>
+    const tokenKey = "daguku_token";
+
+    /* ===== AUTH CHECK (MIDDLEWARE) ===== */
+    async function middleware() {
+      const token = localStorage.getItem(tokenKey);
+      if (!token) return showLogin();
+
+      try {
+        const res = await fetch("/api/check", {
+          headers: { Authorization: token }
+        });
+        res.ok ? showDashboard() : showLogin();
+      } catch {
+        showLogin();
+      }
+    }
+
+    function showLogin() {
+      loginPage.classList.remove("hidden");
+      dashboard.classList.add("hidden");
+    }
+
+    function showDashboard() {
+      loginPage.classList.add("hidden");
+      dashboard.classList.remove("hidden");
+    }
+
+    middleware();
+
+    /* ===== LOGIN ===== */
+    async function login() {
+      const userInput = document.getElementById("username").value;
+      const passInput = document.getElementById("password").value;
+
+
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: userInput,
+          password: passInput
+        })
+      });
+
+
+      const data = await res.json();
+
+
+      if (data.token) {
+        localStorage.setItem("daguku_token", data.token);
+        showDashboard();
+      } else {
+        alert("Username atau password salah");
+      }
+    }
+
+    /* ===== LOGOUT ===== */
+    async function logout() {
+      const token = localStorage.getItem(tokenKey);
+      await fetch("/api/logout", {
+        method: "POST",
         headers: { Authorization: token }
       });
-      res.ok ? showDashboard() : showLogin();
-    } catch {
+      localStorage.removeItem(tokenKey);
       showLogin();
     }
-  }
 
-  function showLogin() {
-    loginPage.classList.remove("hidden");
-    dashboard.classList.add("hidden");
-  }
-
-  function showDashboard() {
-    loginPage.classList.add("hidden");
-    dashboard.classList.remove("hidden");
-  }
-
-  middleware();
-
-  /* ===== LOGIN ===== */
-  async function login() {
-    const username = username.value;
-    const password = password.value;
-
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password })
-    });
-
-    const data = await res.json();
-    if (data.token) {
-      localStorage.setItem(tokenKey, data.token);
-      showDashboard();
-    } else {
-      alert("Login gagal");
+    /* ===== PREVIEW ===== */
+    function previewMessage() {
+      const msg = message.value;
+      if (!msg) return chatPreview.style.display = "none";
+      chatPreview.style.display = "block";
+      chatPreview.textContent = msg;
     }
-  }
 
-  /* ===== LOGOUT ===== */
-  async function logout() {
-    const token = localStorage.getItem(tokenKey);
-    await fetch("/api/logout", {
-      method: "POST",
-      headers: { Authorization: token }
-    });
-    localStorage.removeItem(tokenKey);
-    showLogin();
-  }
-
-  /* ===== PREVIEW ===== */
-  function previewMessage() {
-    const msg = message.value;
-    if (!msg) return chatPreview.style.display = "none";
-    chatPreview.style.display = "block";
-    chatPreview.textContent = msg;
-  }
-
-  /* ===== SEND WA ===== */
-  function sendMessage() {
-    if (!phone.value || !message.value) {
-      alert("Lengkapi data");
-      return;
+    /* ===== SEND WA ===== */
+    function sendMessage() {
+      if (!phone.value || !message.value) {
+        alert("Lengkapi data");
+        return;
+      }
+      window.open(
+        `https://wa.me/${phone.value}?text=${encodeURIComponent(message.value)}`,
+        "_blank"
+      );
     }
-    window.open(
-      `https://wa.me/${phone.value}?text=${encodeURIComponent(message.value)}`,
-      "_blank"
-    );
-  }
-</script>
+  </script>
 
 </body>
+
 </html>
