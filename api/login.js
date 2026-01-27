@@ -1,13 +1,12 @@
 module.exports = (req, res) => {
   if (req.method !== "POST") {
-    res.status(405).json({ error: "Method not allowed" });
-    return;
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   let body = "";
 
   req.on("data", chunk => {
-    body += chunk.toString();
+    body += chunk;
   });
 
   req.on("end", () => {
