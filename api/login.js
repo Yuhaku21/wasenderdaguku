@@ -1,16 +1,22 @@
-export default function handler(req, res) {
+module.exports = (req, res) => {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    res.status(405).json({ error: "Method not allowed" });
+    return;
   }
 
-  const { username, password } = req.body;
+  let body = "";
 
-  // LOGIN HARD-CODE (AMAN UNTUK INTERNAL TOOL)
-  if (username === "worker" && password === "12345") {
-    return res.status(200).json({
-      token: "daguku-token-aman"
-    });
-  }
+  req.on("data", chunk => {
+    body += chunk.toString();
+  });
 
-  return res.status(401).json({ error: "Login gagal" });
-}
+  req.on("end", () => {
+    const { username, password } = JSON.parse(body || "{}");
+
+    if (username === "worker" && password === "12345") {
+      res.status(200).json({ token: "daguku-token" });
+    } else {
+      res.status(401).json({ error: "Login gagal" });
+    }
+  });
+};
