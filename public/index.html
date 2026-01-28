@@ -115,22 +115,13 @@ button:active{
   <h2>💬 Kirim Pesan</h2>
 
   <input id="phone" placeholder="628xxxx">
+  <button id="langToggle" style="background:#334155">
+  🇮🇩 Bahasa Indonesia
+</button>
 
   <select id="message">
-    <option value="">-- Pilih Pesan --</option>
-    <option value="Halo kak saya dari penjoki daguku, izin meminta kode verifikasi ya 😊. Terimakasih">
-      Minta Kode
-    </option>
-    <option value="Halo kak saya dari penjoki daguku. Data akun yang diberikan masih salah ya kak 🙏">
-      Data Salah
-    </option>
-    <option value="Permisi kak, akun jokian kakak sudah selesai. Terima kasih 🙏">
-      Order Selesai
-    </option>
-    <option value="Izin promosi kak, order joki di daguku.my.id lebih murah + promo 😊">
-      Promosi
-    </option>
-  </select>
+  <option value="">-- Pilih Pesan --</option>
+</select>
 
   <button onclick="sendWA()">Kirim WhatsApp</button>
 
@@ -186,6 +177,7 @@ function sendWA(){
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
 }
 </script>
+<script src="language.js"></script>
 
 </body>
 </html>
