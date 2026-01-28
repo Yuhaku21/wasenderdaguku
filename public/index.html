@@ -1,193 +1,191 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daguku Manajemen Sistem</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daguku Manajemen Sistem</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: Arial
-    }
+<style>
+*{
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: radial-gradient(circle at top, #1f2933, #000);
-      color: #fff
-    }
+body{
+  margin:0;
+  min-height:100vh;
+  background:radial-gradient(circle at top,#1f2933,#000);
+  color:#fff;
+  padding:16px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
 
-    .card {
-      width: 100%;
-      max-width: 400px;
-      background: #0f172a;
-      padding: 24px;
-      border-radius: 16px;
-    }
+/* CARD */
+.card{
+  width:100%;
+  max-width:420px;
+  background:#0f172a;
+  padding:20px;
+  border-radius:18px;
+  box-shadow:0 10px 40px rgba(0,0,0,.4);
+}
 
-    input,
-    select,
-    button {
-      width: 100%;
-      padding: 14px;
-      margin-bottom: 12px;
-      border-radius: 12px;
-      border: none
-    }
+/* FORM */
+input, select, button{
+  width:100%;
+  padding:14px;
+  margin-bottom:12px;
+  border-radius:14px;
+  border:none;
+  font-size:15px;
+}
 
-    input,
-    select {
-      background: #020617;
-      color: #fff
-    }
+input, select{
+  background:#020617;
+  color:#fff;
+}
 
-    button {
-      background: #22c55e;
-      font-weight: bold
-    }
+button{
+  background:#22c55e;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-    .hidden {
-      display: none
-    }
+button:active{
+  transform:scale(.98);
+}
 
-    .logout {
-      background: #ef4444
-    }
+.hidden{display:none}
 
-    .preview-box {
-      margin-top: 12px;
-      background: #020617;
-      border-radius: 14px;
-      padding: 12px;
-      animation: fadeUp .3s ease;
-    }
+/* PREVIEW */
+.preview-box{
+  margin-top:14px;
+  background:#020617;
+  border-radius:16px;
+  padding:12px;
+  animation:fadeUp .3s ease;
+}
 
+.preview-title{
+  font-size:12px;
+  color:#94a3b8;
+  margin-bottom:6px;
+}
 
-    .preview-title {
-      font-size: 12px;
-      color: #94a3b8;
-      margin-bottom: 6px;
-    }
+.chat-bubble{
+  background:#22c55e;
+  color:#000;
+  padding:10px 14px;
+  border-radius:16px 16px 4px 16px;
+  font-size:14px;
+  max-width:90%;
+  margin-left:auto;
+  white-space:pre-line;
+  box-shadow:0 4px 12px rgba(0,0,0,.3);
+}
 
+/* ANIM */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
+}
 
-    .chat-bubble {
-      background: #22c55e;
-      color: #000;
-      padding: 10px 14px;
-      border-radius: 16px 16px 4px 16px;
-      font-size: 14px;
-      max-width: 85%;
-      margin-left: auto;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
-      white-space: pre-line;
-    }
-
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(6px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  </style>
+/* DESKTOP ENHANCEMENT */
+@media(min-width:768px){
+  body{padding:40px}
+  .card{padding:24px}
+}
+</style>
 </head>
 
 <body>
 
-  <div class="card" id="loginBox">
-    <h2>Daguku Manajemen Sistem</h2>
-    <input id="username" placeholder="Username">
-    <input id="password" type="password" placeholder="Password">
-    <button onclick="login()">Login</button>
+<!-- LOGIN -->
+<div class="card" id="loginBox">
+  <h2>Daguku Manajemen Sistem</h2>
+  <input id="username" placeholder="Username">
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="card hidden" id="dashboard">
+  <h2>💬 Kirim Pesan</h2>
+
+  <input id="phone" placeholder="628xxxx">
+
+  <select id="message">
+    <option value="">-- Pilih Pesan --</option>
+    <option value="Halo kak saya dari penjoki daguku, izin meminta kode verifikasi ya 😊. Terimakasih">
+      Minta Kode
+    </option>
+    <option value="Halo kak saya dari penjoki daguku. Data akun yang diberikan masih salah ya kak 🙏">
+      Data Salah
+    </option>
+    <option value="Permisi kak, akun jokian kakak sudah selesai. Terima kasih 🙏">
+      Order Selesai
+    </option>
+    <option value="Izin promosi kak, order joki di daguku.my.id lebih murah + promo 😊">
+      Promosi
+    </option>
+  </select>
+
+  <button onclick="sendWA()">Kirim WhatsApp</button>
+
+  <div id="preview" class="preview-box hidden">
+    <div class="preview-title">Preview Pesan</div>
+    <div class="chat-bubble" id="previewText"></div>
   </div>
+</div>
 
-  <div class="card hidden" id="dashboard">
-    <h2>💬 WhatsApp Sender</h2>
-    <input id="phone" placeholder="628xxxx">
-    <select id="message">
-      <option value="">-- Pilih Pesan --</option>
-      <option value="Halo kak saya dari penjoki daguku, izin meminta kode verifikasi ya 😊. Terimakasih">Minta Kode</option>
-      <option value="Halo kak saya dari penjoki daguku. ingin mengkonfirmasi Data akun yang kaka berikan masih salah, silakan dicek ulang dulu ya 🙏">Data Salah</option>
-      <option value="Permisi kak, akun jokian kaka sudah diselesaikan ya kak. Terimakasih sudah order jasa joki di Daguku">Order Selesai</option>
-      <option value="Izin promosi kak, kalau kaka mau pesen jasa joki lagi di Daguku Kaka bisa beli di daguku.my.id disana harganya bisa lebih murah kak ditambah lagi Kaka bisa pakai kode promo juga😊🙏">Promosi</option>
+<script>
+const messageSelect = document.getElementById("message");
+const previewBox = document.getElementById("preview");
+const previewText = document.getElementById("previewText");
 
-    </select>
-    <button onclick="sendWA()">Kirim WhatsApp</button>
-    <div id="preview" class="preview-box hidden">
-      <div class="preview-title">Preview Pesan</div>
-      <div class="chat-bubble" id="previewText"></div>
-    </div>
-  </div>
+messageSelect.addEventListener("change", () => {
+  if(messageSelect.value){
+    previewText.textContent = messageSelect.value;
+    previewBox.classList.remove("hidden");
+  }else{
+    previewBox.classList.add("hidden");
+  }
+});
 
-  <script>
-    const messageSelect = document.getElementById("message");
-    const previewBox = document.getElementById("preview");
-    const previewText = document.getElementById("previewText");
+if(localStorage.getItem("token")) showDashboard();
 
-    messageSelect.addEventListener("change", () => {
-      const msg = messageSelect.value;
-      if (msg) {
-        previewText.textContent = msg;
-        previewBox.classList.remove("hidden");
-      } else {
-        previewBox.classList.add("hidden");
-      }
-    });
+async function login(){
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
 
-    if (localStorage.getItem("token")) {
-      showDashboard();
-    }
+  const res = await fetch("/api/login",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ username,password })
+  });
 
-    async function login() {
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
+  if(res.ok){
+    localStorage.setItem("token","ok");
+    showDashboard();
+  }else{
+    alert("Login gagal");
+  }
+}
 
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-      });
+function showDashboard(){
+  loginBox.classList.add("hidden");
+  dashboard.classList.remove("hidden");
+}
 
-      const data = await res.json();
-
-      if (res.ok) {
-        localStorage.setItem("token", data.token);
-        showDashboard();
-      } else {
-        alert("Login gagal");
-      }
-    }
-
-    function showDashboard() {
-      loginBox.classList.add("hidden");
-      dashboard.classList.remove("hidden");
-    }
-
-    function logout() {
-      localStorage.removeItem("token");
-      location.reload();
-    }
-
-    function sendWA() {
-      const phone = document.getElementById("phone").value;
-      const msg = document.getElementById("message").value;
-      if (!phone || !msg) return alert("Lengkapi data");
-      window.open(
-        `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`
-      );
-    }
-  </script>
+function sendWA(){
+  const phone = document.getElementById("phone").value;
+  const msg = messageSelect.value;
+  if(!phone || !msg) return alert("Lengkapi data");
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
+}
+</script>
 
 </body>
-
 </html>
