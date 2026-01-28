@@ -6,96 +6,57 @@
 <title>Daguku Manajemen Sistem</title>
 
 <style>
-*{
-  box-sizing:border-box;
-  font-family:Arial, sans-serif;
-}
-
+*{box-sizing:border-box;font-family:Arial,sans-serif}
 body{
-  margin:0;
-  min-height:100vh;
+  margin:0;min-height:100vh;
   background:radial-gradient(circle at top,#1f2933,#000);
-  color:#fff;
-  padding:16px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  color:#fff;padding:16px;
+  display:flex;justify-content:center;align-items:center
 }
-
-/* CARD */
 .card{
-  width:100%;
-  max-width:420px;
-  background:#0f172a;
-  padding:20px;
+  width:100%;max-width:420px;
+  background:#0f172a;padding:20px;
   border-radius:18px;
-  box-shadow:0 10px 40px rgba(0,0,0,.4);
+  box-shadow:0 10px 40px rgba(0,0,0,.4)
 }
-
-/* FORM */
-input, select, button{
-  width:100%;
-  padding:14px;
+input,select,button{
+  width:100%;padding:14px;
   margin-bottom:12px;
-  border-radius:14px;
-  border:none;
-  font-size:15px;
+  border-radius:14px;border:none;font-size:15px
 }
-
-input, select{
-  background:#020617;
-  color:#fff;
-}
-
-button{
-  background:#22c55e;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-button:active{
-  transform:scale(.98);
-}
-
+input,select{background:#020617;color:#fff}
+button{background:#22c55e;font-weight:bold;cursor:pointer}
+button:active{transform:scale(.98)}
 .hidden{display:none}
 
-/* PREVIEW */
 .preview-box{
-  margin-top:14px;
-  background:#020617;
-  border-radius:16px;
-  padding:12px;
-  animation:fadeUp .3s ease;
+  margin-top:14px;background:#020617;
+  border-radius:16px;padding:12px;
+  animation:fadeUp .3s ease
 }
-
 .preview-title{
-  font-size:12px;
-  color:#94a3b8;
-  margin-bottom:6px;
+  font-size:12px;color:#94a3b8;margin-bottom:6px
 }
-
 .chat-bubble{
-  background:#22c55e;
-  color:#000;
+  background:#22c55e;color:#000;
   padding:10px 14px;
   border-radius:16px 16px 4px 16px;
-  font-size:14px;
-  max-width:90%;
-  margin-left:auto;
-  white-space:pre-line;
-  box-shadow:0 4px 12px rgba(0,0,0,.3);
+  font-size:14px;max-width:90%;
+  margin-left:auto;white-space:pre-line
+}
+.lang-toggle{
+  display:flex;gap:8px;margin-bottom:12px
+}
+.lang-toggle button{
+  flex:1;background:#020617;color:#fff
+}
+.lang-toggle .active{
+  background:#22c55e;color:#000
 }
 
-/* ANIM */
 @keyframes fadeUp{
   from{opacity:0;transform:translateY(6px)}
   to{opacity:1;transform:translateY(0)}
-}
-
-/* DESKTOP ENHANCEMENT */
-@media(min-width:768px){
-  body{padding:40px}
-  .card{padding:24px}
 }
 </style>
 </head>
@@ -114,22 +75,20 @@ button:active{
 <div class="card hidden" id="dashboard">
   <h2>💬 Kirim Pesan</h2>
 
+  <!-- LANGUAGE -->
+  <div class="lang-toggle">
+    <button id="btn-id" class="active" onclick="setLang('id')">🇮🇩 ID</button>
+    <button id="btn-en" onclick="setLang('en')">🇬🇧 EN</button>
+  </div>
+
   <input id="phone" placeholder="628xxxx">
 
-  <select id="message">
+  <select id="template">
     <option value="">-- Pilih Pesan --</option>
-    <option value="Halo kak saya dari penjoki daguku, izin meminta kode verifikasi ya 😊. Terimakasih">
-      Minta Kode
-    </option>
-    <option value="Halo kak saya dari penjoki daguku. Data akun yang diberikan masih salah ya kak 🙏">
-      Data Salah
-    </option>
-    <option value="Permisi kak, akun jokian kakak sudah selesai. Terima kasih 🙏">
-      Order Selesai
-    </option>
-    <option value="Izin promosi kak, order joki di daguku.my.id lebih murah + promo 😊">
-      Promosi
-    </option>
+    <option value="verify">Minta Kode</option>
+    <option value="wrong">Data Salah</option>
+    <option value="done">Order Selesai</option>
+    <option value="promo">Promosi</option>
   </select>
 
   <button onclick="sendWA()">Kirim WhatsApp</button>
@@ -141,48 +100,57 @@ button:active{
 </div>
 
 <script>
-const messageSelect = document.getElementById("message");
+let currentLang = "id";
+
+const messages = {
+  id:{
+    verify:"Halo kak saya dari penjoki Daguku, izin meminta kode verifikasi ya 😊 Terima kasih.",
+    wrong:"Halo kak, data akun yang diberikan masih salah ya 🙏 Mohon dicek kembali.",
+    done:"Permisi kak, akun jokian kakak sudah selesai. Terima kasih sudah order 🙏",
+    promo:"Izin promosi kak, order joki di daguku.my.id lebih murah + promo 😊"
+  },
+  en:{
+    verify:"Hi, this is Daguku boosting service. May I kindly ask for the verification code 😊 Thank you.",
+    wrong:"Hi, the account data provided seems incorrect 🙏 Please double-check it.",
+    done:"Hello, your boosting order has been completed. Thank you for your order 🙏",
+    promo:"Hi! Order boosting services at daguku.my.id for cheaper prices + promo 😊"
+  }
+};
+
+const templateSelect = document.getElementById("template");
 const previewBox = document.getElementById("preview");
 const previewText = document.getElementById("previewText");
 
-messageSelect.addEventListener("change", () => {
-  if(messageSelect.value){
-    previewText.textContent = messageSelect.value;
-    previewBox.classList.remove("hidden");
-  }else{
-    previewBox.classList.add("hidden");
-  }
-});
+templateSelect.addEventListener("change", updatePreview);
 
-if(localStorage.getItem("token")) showDashboard();
-
-async function login(){
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-
-  const res = await fetch("/api/login",{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({ username,password })
-  });
-
-  if(res.ok){
-    localStorage.setItem("token","ok");
-    showDashboard();
-  }else{
-    alert("Login gagal");
-  }
+function setLang(lang){
+  currentLang = lang;
+  document.getElementById("btn-id").classList.toggle("active", lang==="id");
+  document.getElementById("btn-en").classList.toggle("active", lang==="en");
+  updatePreview();
 }
 
-function showDashboard(){
-  loginBox.classList.add("hidden");
-  dashboard.classList.remove("hidden");
+function updatePreview(){
+  const key = templateSelect.value;
+  if(!key){ previewBox.classList.add("hidden"); return; }
+  previewText.textContent = messages[currentLang][key];
+  previewBox.classList.remove("hidden");
+}
+
+async function login(){
+  const res = await fetch("/api/login",{method:"POST"});
+  if(res.ok){
+    localStorage.setItem("token","ok");
+    loginBox.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+  }else alert("Login gagal");
 }
 
 function sendWA(){
   const phone = document.getElementById("phone").value;
-  const msg = messageSelect.value;
-  if(!phone || !msg) return alert("Lengkapi data");
+  const key = templateSelect.value;
+  if(!phone||!key) return alert("Lengkapi data");
+  const msg = messages[currentLang][key];
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
 }
 </script>
